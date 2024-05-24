@@ -122,8 +122,8 @@ def playGame():
     listaP = []
     cooldown = 0
 
-    l = 3
-    c = 3
+    l = 5
+    c = 8
     spacing = 20
     direcao_inimigo = "right"
     inimigos = criar_inimigos(l, c, spacing)
@@ -172,6 +172,6 @@ def playGame():
             return
         
         janela.draw_text(f"Vidas: {vidas}", janela.width - 120, 10, size=24, color=(255, 255, 255), bold=True)
-        janela.draw_text(f"Pontos: {pontos}", janela.width - 120, 40, size=24, color=(255, 255, 255), bold=True)
+        janela.draw_text(f"Pontos: {pontos}", janela.width - 140, 40, size=24, color=(255, 255, 255), bold=True)
         
         janela.update()
