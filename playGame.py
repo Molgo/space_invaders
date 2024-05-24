@@ -30,55 +30,80 @@ def gameover():
         if teclado.key_pressed("ESC"):
             return
         
-def create_monsters(rows, cols, spacing, screen_width=1000):
-    monsters = []
+def criar_inimigos(l, c, spacing, screen_width=1000):
+    inimigos = []
     start_x = spacing // 2
     start_y = 50
-    for i in range(rows):
+    for i in range(l):
         row = []
-        for j in range(cols):
+        for j in range(c):
             monster = Sprite('./assets/enemyRes.png')
             monster.x = start_x + j * (monster.width + spacing)
             monster.y = start_y + i * (monster.height + spacing)
             row.append(monster)
-        monsters.append(row)
-    return monsters
+        inimigos.append(row)
+    return inimigos
 
-def draw_monsters(monsters):
-    for row in monsters:
+def desenhar_inimigo(inimigos):
+    for row in inimigos:
         for monster in row:
             monster.draw()
-def move_monsters(monsters, direction, delta_time, screen_width=1000):
-    speed = 100  
-    move_down = False
 
-    for row in monsters:
+def movimento_inimgo(inimigos, direction, delta_time, screen_width=1000):
+    flag = False
+
+    for row in inimigos:
         for monster in row:
             if direction == "right" and monster.x + monster.width >= screen_width:
                 direction = "left"
-                move_down = True
+                flag = True
             elif direction == "left" and monster.x <= 0:
                 direction = "right"
-                move_down = True
+                flag = True
 
-    for row in monsters:
+    for row in inimigos:
         for monster in row:
             if direction == "right":
-                monster.x += speed * delta_time
+                monster.x += 150 * delta_time
             else:
-                monster.x -= speed * delta_time
-    if move_down:
-        for row in monsters:
+                monster.x -= 150 * delta_time
+    if flag:
+        for row in inimigos:
             for monster in row:
                 monster.y += monster.height // 2
 
     return direction
 
-def monsters_reach_player(monsters, player):
-    for row in monsters:
+def inimigo_jogador(inimigos, player):
+    for row in inimigos:
         for monster in row:
             if monster.y + monster.height >= player.y:
                 gameover()
+    return False
+
+def limpar_inimigo(inimigos):
+    for row in inimigos:
+        for monster in row:
+            row.remove(monster)
+        inimigos.remove(row)
+
+def projetil_inimigo(listaProj, inimigos, l, c):
+
+    esquerda = min(monster.x for row in inimigos for monster in row)
+    direita = max(monster.x + monster.width for row in inimigos for monster in row)
+    topo = min(monster.y for row in inimigos for monster in row)
+    base = max(monster.y + monster.height for row in inimigos for monster in row)   
+
+    for proj in listaProj:
+        if proj.x > direita or proj.x + proj.width < esquerda or proj.y > base or proj.y + proj.height < topo:
+            continue
+        else:
+            for row in inimigos:
+                for monster in row:
+                    if proj.collided(monster):
+                        listaProj.remove(proj)
+                        row.remove(monster)
+                        return True
     return False
 
 def playGame():
@@ -97,11 +122,14 @@ def playGame():
     listaP = []
     cooldown = 0
 
-    rows = 5
-    cols = 8
+    l = 3
+    c = 3
     spacing = 20
-    monster_direction = "right"
-    monsters = create_monsters(rows, cols, spacing)
+    direcao_inimigo = "right"
+    inimigos = criar_inimigos(l, c, spacing)
+
+    vidas = 3
+    pontos = 0
 
     while True:
         delta_time = janela.delta_time()
@@ -123,16 +151,27 @@ def playGame():
         cooldown-=5*janela.delta_time()
         tiro(janela,listaP)
 
-        monster_direction = move_monsters(monsters, monster_direction, delta_time)
+        direcao_inimigo = movimento_inimgo(inimigos, direcao_inimigo, delta_time)
 
-        draw_monsters(monsters)
+        desenhar_inimigo(inimigos)
 
-        if monsters_reach_player(monsters, player):
+        if inimigo_jogador(inimigos, player):
             print("Game Over")
             janela.set_background_color((0,0,0))
             return 0
         
+        if projetil_inimigo(listaP, inimigos, l, c):
+            pontos += 10
+            print(pontos)
+            print(vidas)
+
+        if not any(inimigos):
+            playGame()
+        
         if teclado.key_pressed("ESC"):
             return
+        
+        janela.draw_text(f"Vidas: {vidas}", janela.width - 120, 10, size=24, color=(255, 255, 255), bold=True)
+        janela.draw_text(f"Pontos: {pontos}", janela.width - 120, 40, size=24, color=(255, 255, 255), bold=True)
         
         janela.update()
