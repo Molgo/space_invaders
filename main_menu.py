@@ -2,7 +2,7 @@ from PPlay.window import *
 from PPlay.sprite import *
 from PPlay.gameimage import *
 from PPlay.mouse import *
-import playGame
+import game
 import playerRank
 import difficulty
 
@@ -48,11 +48,11 @@ def menu():
         if mouseClick.is_over_object(play):
                     playHover.draw()
                     if mouseClick.is_button_pressed(1):
-                        playGame.playGame()
+                        game.playGame()
 
         if mouseClick.is_over_object(dificuldade):
                     dificuldadeHover.draw()
-                    if mouseClick.is_button_pressed(1):
+                    if mouseClick.is_button_pressed(2):
                         difficulty.dificuldade()
 
         if mouseClick.is_over_object(ranking):

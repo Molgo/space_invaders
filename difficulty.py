@@ -19,12 +19,12 @@ def dificuldade():
     mediumHover.set_position(medium.x, medium.y)
 
     hard = Sprite("./assets/hardBtn.png",1)
-    hard.set_position(medium.x, medium.y - medium.height * 1.5)
+    hard.set_position(medium.x, medium.y + medium.height * 1.5)
     hardHover = Sprite("./assets/hardHover.png",1)
     hardHover.set_position(hard.x, hard.y)
 
     easy = Sprite("./assets/easyBtn.png",1)
-    easy.set_position(medium.x, medium.y + medium.height)
+    easy.set_position(medium.x, medium.y - medium.height * 1.5)
     easyHover = Sprite("./assets/easyHover.png",1)
     easyHover.set_position(easy.x, easy.y)
 
